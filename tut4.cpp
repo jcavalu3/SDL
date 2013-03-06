@@ -1,4 +1,4 @@
-//The headers
+//Headers
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include <string>
@@ -80,7 +80,7 @@ bool init()
 bool load_files()
 {
 	//Load the image
-	image = load_image("x.png");
+	image = load_image("hello.png");
 
 	//If the re was an error in loading the image
 	if(image == NULL)
