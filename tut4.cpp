@@ -62,10 +62,10 @@ bool init()
 	}
 
 	//Set up the screen
-	screen = SDL_SetVideomode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
+	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
 
 	//IF there was an error in setting up the screen
-	if(screen = NULL)
+	if(screen == NULL)
 	{
 		return false;
 	}
