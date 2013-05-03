@@ -141,6 +141,14 @@ int applydirt()
 	return(0);
 }
 
+/*
+int removedirt()
+{
+	int x, y;
+	x = 
+
+*/
+
 int main(int argc, char* args[])
 {
 	int update;
