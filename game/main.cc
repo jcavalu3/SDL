@@ -4,6 +4,7 @@
 #include "dirt.h"
 #include <sstream>
 #include <time.h>
+#include <unistd.h>
 
 const int SCREEN_WIDTH      = 576;
 const int SCREEN_HEIGHT     = 960;
@@ -157,8 +158,8 @@ int main(int argc, char* args[])
 
 	srand(time(NULL));
 
-	int enemie = 0;
-	int dead = 0;
+	int emov = 0, clear = 0;
+	int dead = 0, death = 2;
 	int f = 0;
 	int x = 0, y = 0;
 	int ex = 288, ey = 512;
@@ -245,50 +246,36 @@ int main(int argc, char* args[])
 			}
 		}
 
-		enemie = rand() % 4;
+		emov = rand() % 30;
 
-		switch(enemie)
+		switch(emov)
 		{
-			case '0':
-				if(field.get(((ex + 32)/32), (ey/32)) != 0)
-				{
-					ex = ex;
-					ey = ey;
-				}
-				else
-				{
+			case 0:
+				clear = field.get((ex/32) + 1, ey/32);
+				if(clear == 0)
 					ex = ex + 32;
-				}
-			case '1':
-				if(field.get(((ex -32)/32), (ey/32)) != 0)
-				{
-					ex = ex;
-					ey = ey;
-				}
-				else
-				{
-					ex = ex -32;
-				}
-			case '2':
-				if(field.get((ex/32), ((ey + 32)/32)) != 0)
-				{
-					ex = ex;
-					ey = ey;
-				}
-				else
-				{
+				break;
+
+			case 1:
+				clear = field.get((ex/32) - 1, ey/32);
+				if(clear == 0)
+					ex = ex - 32;
+				break;
+
+			case 2:
+				clear = field.get(ex/32, (ey/32) + 1);
+				if(clear == 0)
 					ey = ey + 32;
-				}
-			case '3':
-				if(field.get((ex/32), ((ey - 32)/32)) != 0)
-				{
-					ex = ex;
-					ey = ey;
-				}
-				else
-				{
+				break;
+
+			case 3:
+				clear = field.get(ex/32, (ey/32) - 1);
+				if(clear == 0)
 					ey = ey - 32;
-				}
+				break;
+
+			default:
+				break;
 		}
 
 		apply_surface(0, 0, background, screen);
@@ -327,6 +314,25 @@ int main(int argc, char* args[])
 			y = 64;
 		}
 
+		if(ex > 544 && ey == 96)
+		{
+			ex = 0;
+		}
+		else if(ex > 544 && ey > 96)
+		{
+			ex = 544;
+		}
+
+		if(ey > 928)
+		{
+			ey = 928;
+		}
+
+		if(ey < 96)
+		{
+			ey = 96;
+		}
+
 		if((x >= ex - 32) && (x <= ex) && (y == ey))
 		{
 			x = ex - 32;
@@ -355,6 +361,12 @@ int main(int argc, char* args[])
 		{
 			f = 3;
 			y = y - 32;
+			if(y == 32 && death != 0)
+			{
+				sleep(3);
+				death--;
+				dead = 0;
+			}
 		}
 
 /*		if(field.get(x, y) == 0)
@@ -365,7 +377,7 @@ int main(int argc, char* args[])
 		field.set((x / 32), (y / 32), 0);
 
 		apply_surface(x, y, bob, screen, &clip[f]);
-		apply_surface(ex, ey, enemy, screen);
+		apply_surface(ex, ey, enemy, screen, NULL);
 
 		if(SDL_Flip(screen) == -1)
 		{
@@ -376,7 +388,7 @@ int main(int argc, char* args[])
 		if(update > 1000)
 		{
 			std::stringstream caption;
-			caption<<"average trames per second:"<<frame / (SDL_GetTicks()/1000.f);
+						caption<<"average trames per second:"<<frame / (SDL_GetTicks()/1000.f);
 		}
 	}
 
