@@ -3,6 +3,7 @@
 #include <SDL/SDL_image.h>
 #include "dirt.h"
 #include <sstream>
+#include <time.h>
 
 const int SCREEN_WIDTH      = 576;
 const int SCREEN_HEIGHT     = 960;
@@ -16,7 +17,7 @@ SDL_Surface *bob            = NULL;
 SDL_Surface *enemy          = NULL;
 dirt field;
 
-SDL_Rect clip[4];
+SDL_Rect clip[5];
 
 SDL_Event event;
 
@@ -141,13 +142,12 @@ int applydirt()
 	return(0);
 }
 
-/*
-int removedirt()
-{
-	int x, y;
-	x = 
 
-*/
+//int removedirt(int x, int y)
+//{
+	 
+
+
 
 int main(int argc, char* args[])
 {
@@ -155,10 +155,13 @@ int main(int argc, char* args[])
 	int frame = 0;
 	bool cap = true;
 
+	srand(time(NULL));
+
+	int enemie = 0;
 	int dead = 0;
 	int f = 0;
 	int x = 0, y = 0;
-	int ex = 192, ey = 640;
+	int ex = 288, ey = 512;
 	bool quit = false;
 	field.init(0);
 
@@ -189,7 +192,11 @@ int main(int argc, char* args[])
 	clip[3].y = 34;
 	clip[3].w = 22;
 	clip[3].h = 34;
-
+	//DIGGING SPRITE
+	clip[4].x = 128;
+	clip[4].y = 186;
+	clip[4].w = 24;
+	clip[4].h = 48; 
 
 	while(quit == false)
 	{
@@ -236,6 +243,52 @@ int main(int argc, char* args[])
 			{ 
 				quit = true;
 			}
+		}
+
+		enemie = rand() % 4;
+
+		switch(enemie)
+		{
+			case '0':
+				if(field.get(((ex + 32)/32), (ey/32)) != 0)
+				{
+					ex = ex;
+					ey = ey;
+				}
+				else
+				{
+					ex = ex + 32;
+				}
+			case '1':
+				if(field.get(((ex -32)/32), (ey/32)) != 0)
+				{
+					ex = ex;
+					ey = ey;
+				}
+				else
+				{
+					ex = ex -32;
+				}
+			case '2':
+				if(field.get((ex/32), ((ey + 32)/32)) != 0)
+				{
+					ex = ex;
+					ey = ey;
+				}
+				else
+				{
+					ey = ey + 32;
+				}
+			case '3':
+				if(field.get((ex/32), ((ey - 32)/32)) != 0)
+				{
+					ex = ex;
+					ey = ey;
+				}
+				else
+				{
+					ey = ey - 32;
+				}
 		}
 
 		apply_surface(0, 0, background, screen);
@@ -303,6 +356,13 @@ int main(int argc, char* args[])
 			f = 3;
 			y = y - 32;
 		}
+
+/*		if(field.get(x, y) == 0)
+		{
+			f = 4;
+		}
+*/
+		field.set((x / 32), (y / 32), 0);
 
 		apply_surface(x, y, bob, screen, &clip[f]);
 		apply_surface(ex, ey, enemy, screen);
